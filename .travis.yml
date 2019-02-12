@@ -1,0 +1,33 @@
+language: rust
+rust:
+  - stable
+matrix:
+  include:
+    - name: "macOS"
+      os: osx
+      env:
+        - BIN_NAME=target/release/frame_limiter_test
+        - DEPLOY_NAME=frame_limiter_test-osx
+    - name: "Windows"
+      os: windows
+      env:
+        - BIN_NAME=target/release/frame_limiter_test.exe
+        - DEPLOY_NAME=frame_limiter_test-win.exe
+    - name: "Linux"
+      os: linux
+      env:
+        - BIN_NAME=target/release/frame_limiter_test
+        - DEPLOY_NAME=frame_limiter_test-lin
+script:
+  - cargo build --release --verbose --all
+before_deploy:
+  - cp $BIN_NAME $DEPLOY_NAME
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: "$DEPLOY_NAME"
+  skip_cleanup: true
+  draft: true
+  overwrite: true
+  on:
+    tags: true
